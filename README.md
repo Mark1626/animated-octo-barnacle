@@ -8,7 +8,7 @@ Been a long time single I took up the dynamic symbol table pattern.
 
 ### Goals
 
-- [ ] Use ant + ivy for the java target
+- [x] Use ant + ivy for the java target
 - [ ] Establish Continuous Integration
 - [ ] Flex and Bison Runtime
 - [ ] Possible Antlr4 C# Runtime

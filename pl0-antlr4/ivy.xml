@@ -1,0 +1,14 @@
+<ivy-module version="2.0">
+    <info organisation="com.mark" module="pl0"/>
+    <configurations>
+        <conf name="findbugs" visibility="public" description="findbugs JAR files"/>
+    </configurations>
+    <dependencies>
+        <dependency org="org.antlr" name="antlr4" rev="4.7.1" />
+        <dependency org="com.puppycrawl.tools" name="checkstyle" rev="8.14" />
+        <dependency org="com.google.code.findbugs" name="findbugs" rev="3.0.1"
+                    conf="findbugs->default"/>
+        <dependency org="junit" name="junit" rev="4.12" />
+        <dependency org="org.jacoco" name="org.jacoco.ant" rev="0.8.2" />
+    </dependencies>
+</ivy-module>

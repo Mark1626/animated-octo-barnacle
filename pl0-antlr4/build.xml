@@ -1,0 +1,204 @@
+<project name="plo-java"
+         xmlns:ivy="antlib:org.apache.ivy.ant"
+         xmlns:jacoco="antlib:org.jacoco.ant"
+         default="build">
+
+    <!-- TODO Configure depends pipeline -->
+
+    <property name="root.dir"          value="."/>
+    <property name="dist.dir"          value="dist/"/>
+    <property name="build.dir"         value="build"/>
+    <property name="src.dir"           value="src/"/>
+    <property name="lib.dir"           value="lib"/>
+    <property name="grammar.dir"       value="grammar"/>
+    <property name="test.dir"          value="test"/>
+    <property name="test.build.dir"    value="build/test"/>
+    <property name="main.build.dir"    value="build/main"/>
+
+    <path id="classpath.base" />
+
+    <path id="main.src.dir">
+        <fileset dir="${src.dir}"/>
+        <fileset dir="${grammar.dir}"/>
+    </path>
+
+    <path id="lib.path">
+        <pathelement location="${build}"/>
+        <fileset dir="${lib.dir}" includes="**/*.jar"></fileset>
+    </path>
+
+    <path id="classpath.src">
+        <pathelement location="${lib.dir}/antlr4-runtime-4.7.1.jar"></pathelement>
+    </path>
+
+    <path id="classpath.test">
+        <pathelement location="${lib.dir}/antlr4-runtime-4.7.1.jar"></pathelement>
+        <pathelement location="${lib.dir}/junit-4.12.jar" />
+        <pathelement location="${lib.dir}/hamcrest-core-1.3.jar" />
+        <pathelement location="${main.build.dir}"/>
+        <pathelement location="${test.build.dir}"/>
+        <path refid="classpath.base" />
+    </path>
+
+    <!-- =================================
+         target: retrieve
+         ================================= -->
+    <target name="resolve"
+            description="--> retrieve dependencies">
+        <ivy:retrieve/>
+    </target>
+
+    <!-- =================================
+         target: clean
+         ================================= -->
+    <target name="clean"
+            description="--> clean the project">
+        <!-- TODO Update clean task -->
+        <delete includeemptydirs="true" quiet="true">
+            <fileset dir="${build.dir}" includes="**" />
+        </delete>
+    </target>
+
+    <!-- =================================
+          target: clean-cache
+         ================================= -->
+    <target name="clean-cache"
+            description="--> clean the Ivy cache"
+            depends="resolve">
+        <ivy:cleancache/>
+    </target>
+
+    <!-- =================================
+          target: generate-grammar
+         ================================= -->
+    <target name="generate-grammar"
+            description="--> generates java files from grammar">
+
+        <property name="grammar.dir" value="grammar"/>
+
+        <path id="classpath">
+            <fileset dir="lib">
+                <include name="${lib.dir}/antlr4-runtime-4.7.1.jar"/>
+            </fileset>
+        </path>
+
+        <echo>Generating the lexer and parser...</echo>
+        <java classname="org.antlr.v4.Tool" fork="true" failonerror="true">
+            <arg value="-no-listener"/>
+            <arg value="-visitor"/>
+            <!--<arg value="-o"/>-->
+            <!--<arg value="${grammar.dir}/com/mark"/>-->
+            <arg value="${grammar.dir}/com/mark/grammar/PLLexer.g4"/>
+            <arg value="${grammar.dir}/com/mark/grammar/PLParser.g4"/>
+            <classpath refid="classpath"/>
+        </java>
+    </target>
+
+    <!-- =================================
+         target: check
+         ================================= -->
+    <target name="checkstyle"
+            description="--> checkstyle the project">
+        <taskdef classpath="${lib.dir}/checkstyle-8.14.jar"
+                 classpathref="lib.path"
+                 resource="com/puppycrawl/tools/checkstyle/ant/checkstyle-ant-task.properties"
+        />
+        <checkstyle config="sun_checks.xml"
+                    failOnViolation="false">
+            <formatter type="xml" toFile="build/checkstyle_errors.xml"/>
+            <fileset dir=".">
+                <include name="src/**/*.java"/>
+                <include name="*.xml"/>
+            </fileset>
+            <property key="checkstyle.cache.file" file="build/cachefile"/>
+        </checkstyle>
+    </target>
+
+    <!-- =================================
+         target: jacoco
+         ================================= -->
+    <!--<target name="jacoco"-->
+            <!--description="&#45;&#45;&ndash;&gt; test case coverage of the project">-->
+        <!--<taskdef uri="antlib:org.jacoco.ant"-->
+                 <!--resource="org/jacoco/ant/antlib.xml">-->
+            <!--<classpath path="path_to_jacoco/lib/jacocoant.jar"/>-->
+        <!--</taskdef>-->
+    <!--</target>-->
+
+    <!-- =================================
+         target: test
+         ================================= -->
+    <target name="test"
+            description="----> test the project"
+            depends="compile">
+
+        <taskdef uri="antlib:org.jacoco.ant"
+                 resource="org/jacoco/ant/antlib.xml">
+            <classpath path="${lib.dir}/jacocoant.jar"/>
+        </taskdef>
+
+        <mkdir dir="${test.build.dir}"/>
+
+        <javac srcdir="${test.dir}" destdir="${test.build.dir}" includeantruntime="false">
+            <classpath refid="classpath.test"/>
+        </javac>
+
+        <junit printsummary="on" haltonfailure="yes">
+            <classpath>
+                <path refid="classpath.test" />
+                <pathelement location="${test.build.dir}"/>
+            </classpath>
+            <formatter type="brief" usefile="false" />
+            <batchtest>
+                <fileset dir="${test.dir}" includes="**/*Test*.java" />
+            </batchtest>
+        </junit>
+    </target>
+
+    <!-- =================================
+         target: spotbug
+         ================================= -->
+
+    <target name="spotbug"
+            description="---> spotbug file check">
+        <taskdef
+                resource="edu/umd/cs/findbugs/anttask/tasks.properties"
+                classpath="${lib.dir}/spotbugs-ant.jar"
+        />
+        <!-- TODO Add Spotbug -->
+    </target>
+
+
+    <!-- =================================
+         target: compile
+         ================================= -->
+    <target name="compile"
+            description="---> compile the project"
+            depends="resolve, generate-grammar">
+        <mkdir dir="${main.build.dir}"/>
+        <javac srcdir="${grammar.dir}" destdir="${main.build.dir}" includeantruntime="false">
+            <classpath refid="classpath.src"/>
+        </javac>
+        <javac srcdir="${src.dir}" destdir="${main.build.dir}" includeantruntime="false">
+            <classpath refid="classpath.src"/>
+        </javac>
+    </target>
+
+    <!-- =================================
+         target: build
+         ================================= -->
+    <target name="build"
+            description="---> builds the project"
+            depends="compile">
+        <mkdir dir="${dist.dir}"/>
+        <jar destfile="${dist.dir}/PLInterpretor.jar">
+            <fileset dir="${main.build.dir}"/>
+            <zipfileset includes="**/*.class" src="${lib.dir}/antlr4-runtime-4.7.1.jar"/>
+            <manifest>
+                <attribute name="Manifest-Version" value="1.0"/>
+                <attribute name="Created-By" value="nimalan.m"/>
+                <attribute name="Main-Class" value="com.mark.grammar.Interpretor"/>
+            </manifest>
+        </jar>
+    </target>
+</project>
