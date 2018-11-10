@@ -1,6 +1,7 @@
 .idea
 *.iml
 lib/
-antlr_java/
+grammar/
 out/
 build/
+dist/

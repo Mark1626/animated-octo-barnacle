@@ -13,8 +13,13 @@ public class Interpretor {
     }
 
     public static void main(final String[] args) {
-		ParserRuleContext parseTree = TreeGeneratorUtil.generateTree(
-		        "examples/example3.pl", "program");
+        if(args.length == 0) {
+            throw new PLException("Please Specify the filename");
+        } else if (args.length > 1) {
+            throw new PLException("Too many arguments specified");
+        }
+        String fileName = args[0];
+		ParserRuleContext parseTree = TreeGeneratorUtil.generateTree(fileName, "program");
         Map<String, Value> values = new HashMap<String, Value>();
 		SymbolTable symbolTable = new SymbolTable(new Entities.Scope(null), values);
         ExecutionVisitor visitor = new ExecutionVisitor(symbolTable);

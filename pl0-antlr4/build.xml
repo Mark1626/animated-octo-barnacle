@@ -6,6 +6,7 @@
     <!-- TODO Configure depends pipeline -->
 
     <property name="root.dir"          value="."/>
+    <property name="dist.dir"          value="dist/"/>
     <property name="build.dir"         value="build"/>
     <property name="src.dir"           value="src/"/>
     <property name="lib.dir"           value="lib"/>
@@ -169,11 +170,11 @@
 
 
     <!-- =================================
-         target: build
+         target: compile
          ================================= -->
     <target name="compile"
-            description="---> compile the project">
-            <!--depends="resolve">-->
+            description="---> compile the project"
+            depends="resolve, generate-grammar">
         <mkdir dir="${main.build.dir}"/>
         <javac srcdir="${grammar.dir}" destdir="${main.build.dir}" includeantruntime="false">
             <classpath refid="classpath.src"/>
@@ -181,5 +182,23 @@
         <javac srcdir="${src.dir}" destdir="${main.build.dir}" includeantruntime="false">
             <classpath refid="classpath.src"/>
         </javac>
+    </target>
+
+    <!-- =================================
+         target: build
+         ================================= -->
+    <target name="build"
+            description="---> builds the project"
+            depends="compile">
+        <mkdir dir="${dist.dir}"/>
+        <jar destfile="${dist.dir}/PLInterpretor.jar">
+            <fileset dir="${main.build.dir}"/>
+            <zipfileset includes="**/*.class" src="${lib.dir}/antlr4-runtime-4.7.1.jar"/>
+            <manifest>
+                <attribute name="Manifest-Version" value="1.0"/>
+                <attribute name="Created-By" value="nimalan.m"/>
+                <attribute name="Main-Class" value="com.mark.grammar.Interpretor"/>
+            </manifest>
+        </jar>
     </target>
 </project>
