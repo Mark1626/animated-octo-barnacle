@@ -114,7 +114,7 @@ public final class ExecutionVisitor extends PLParserBaseVisitor<Void> {
     @Override
     public Void visitWriteStmt(PLParser.WriteStmtContext ctx) {
         // TODO Is System.out.println the right thing to do?
-        System.out.println(exprVisitor.visitExpression(ctx.expression()));
+        System.out.println(exprVisitor.visitExpression(ctx.expression()).getDisplayValue());
         return null;
     }
 

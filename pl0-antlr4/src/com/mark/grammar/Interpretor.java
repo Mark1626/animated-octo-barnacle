@@ -20,7 +20,7 @@ public class Interpretor {
         }
         String fileName = args[0];
 		ParserRuleContext parseTree = TreeGeneratorUtil.generateTree(fileName, "program");
-        Map<String, Value> values = new HashMap<String, Value>();
+        Map<String, Value> values = new HashMap<>();
 		SymbolTable symbolTable = new SymbolTable(new Entities.Scope(null), values);
         ExecutionVisitor visitor = new ExecutionVisitor(symbolTable);
         visitor.visitProgram((PLParser.ProgramContext) parseTree);

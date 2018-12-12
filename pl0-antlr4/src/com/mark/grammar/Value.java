@@ -39,6 +39,10 @@ public interface Value {
             return Entities.NUMBER;
         }
 
+        public String getDisplayValue() {
+            return this.val.toString();
+        }
+
         @Override
         public int hashCode() {
             return val.hashCode();

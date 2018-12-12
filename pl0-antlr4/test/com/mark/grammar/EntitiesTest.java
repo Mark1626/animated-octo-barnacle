@@ -1,6 +1,7 @@
 package com.mark.grammar;
 
 import org.junit.Test;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
@@ -10,20 +11,20 @@ public class EntitiesTest {
     @Test
     public void entitiesTest() {
         assertEquals("sum of values should be equal",
-                Value.IntValue.valueOf(9),
-                Entities.addValue(Value.IntValue.valueOf(5),Value.IntValue.valueOf(4))
+                     Value.IntValue.valueOf(9),
+                     Entities.addValue(Value.IntValue.valueOf(5), Value.IntValue.valueOf(4))
         );
         assertEquals("diff of vales should be equal",
-                Value.IntValue.valueOf(1),
-                Entities.subValue(Value.IntValue.valueOf(5),Value.IntValue.valueOf(4))
+                     Value.IntValue.valueOf(1),
+                     Entities.subValue(Value.IntValue.valueOf(5), Value.IntValue.valueOf(4))
         );
         assertEquals("mul of values should be equal",
-                Value.IntValue.valueOf(20),
-                Entities.mulValue(Value.IntValue.valueOf(5), Value.IntValue.valueOf(4))
+                     Value.IntValue.valueOf(20),
+                     Entities.mulValue(Value.IntValue.valueOf(5), Value.IntValue.valueOf(4))
         );
         assertEquals("div of values should be equal",
-                Value.IntValue.valueOf(2),
-                Entities.divValue(Value.IntValue.valueOf(10), Value.IntValue.valueOf(5))
+                     Value.IntValue.valueOf(2),
+                     Entities.divValue(Value.IntValue.valueOf(10), Value.IntValue.valueOf(5))
         );
         try {
             Entities.divValue(Value.IntValue.valueOf(10), Value.IntValue.valueOf(0));
